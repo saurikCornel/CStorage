@@ -19,7 +19,7 @@ public struct Memory<Value: Codable & Equatable> {
 
     public var wrappedValue: Value {
         get { value }
-        set {
+        mutating set { 
             value = newValue
             UserDefaults.standard.encode(value, forKey: key)
         }
