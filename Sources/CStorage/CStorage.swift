@@ -1,25 +1,23 @@
 import Foundation
 import SwiftUI
 
-
-protocol Memorized {
+public protocol Memorized {
     associatedtype Value: Codable & Equatable
     static var key: String { get }
     static var defaultValue: Value { get }
 }
 
-
 @propertyWrapper
-struct Memory<Value: Codable & Equatable> {
-    let key: String
+public struct Memory<Value: Codable & Equatable> {
+    public let key: String
     private var value: Value
 
-    init<T: Memorized>(_ type: T.Type) where T.Value == Value {
+    public init<T: Memorized>(_ type: T.Type) where T.Value == Value {
         self.key = type.key
         self.value = UserDefaults.standard.decode(Value.self, forKey: key) ?? type.defaultValue
     }
 
-    var wrappedValue: Value {
+    public var wrappedValue: Value {
         get { value }
         set {
             value = newValue
@@ -28,7 +26,7 @@ struct Memory<Value: Codable & Equatable> {
     }
 }
 
-extension UserDefaults {
+public extension UserDefaults {
     func decode<T: Codable>(_ type: T.Type, forKey key: String) -> T? {
         guard let data = data(forKey: key) else { return nil }
         return try? JSONDecoder().decode(T.self, from: data)
@@ -41,15 +39,19 @@ extension UserDefaults {
     }
 }
 
-
-final class ScoreMemory: Memorized {
-    static let key = "score"
-    static let defaultValue: Test = .init(name: "", age: 0, volumes: [])
+public final class ScoreMemory: Memorized {
+    public static let key = "score"
+    public static let defaultValue: Test = .init(name: "", age: 0, volumes: [])
 }
 
+public struct Test: Codable, Equatable {
+    public var name: String
+    public var age: Int
+    public var volumes: [Double]
 
-struct Test: Codable, Equatable {
-    var name: String
-    var age: Int
-    var volumes: [Double]
+    public init(name: String, age: Int, volumes: [Double]) {
+        self.name = name
+        self.age = age
+        self.volumes = volumes
+    }
 }
